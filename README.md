@@ -9,10 +9,11 @@ Join us at [near.social](https://near.social/#/).
 
 ### Next Steps
 
-- [ ] Merge [PR to near-bos-webcomponent](https://github.com/petersalomonsen/near-bos-webcomponent/pull/1) and replace bundles
+- [ ] Merge [PR to near-bos-webcomponent](https://github.com/petersalomonsen/near-bos-webcomponent/pull/1) and replace bundles from CDN
 - [ ] Ability to publish JSX widget to the [social-db](https://github.com/NearSocial/social-db)
 - [ ] Load in existing widgets and make modifications to them
 - [ ] Option to provide your own API key
+- [ ] Feature to provide custom prompts and option to swap chat gpt model
 
 # draw-a-ui
 
@@ -20,7 +21,7 @@ This is an app that uses tldraw and the gpt-4-vision api to generate JSX based o
 
 ![A demo of the app](./demo.gif)
 
-This works by just taking the current canvas SVG, converting it to a PNG, and sending that png to gpt-4-vision with instructions to return a single html file with tailwind.
+This works by just taking the current canvas SVG, converting it to a PNG, and sending that png to gpt-4-vision with instructions to return a single jsx file with styled components.
 
 > Disclaimer: This is a demo and is not intended for production use. It doesn't have any auth so you will go broke if you deploy it.
 

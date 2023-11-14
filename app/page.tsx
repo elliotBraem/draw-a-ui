@@ -2,6 +2,7 @@
 
 "use client";
 
+import { VmComponent } from "@/components/vm/VmComponent";
 import { blobToBase64 } from "@/lib/blobToBase64";
 import { getSvgAsImage } from "@/lib/getSvgAsImage";
 import {
@@ -61,7 +62,8 @@ class PreviewShape extends BaseBoxShapeUtil<PreviewShapeType> {
     `;
     return (
       <HTMLContainer className="tl-embed-container" id={shape.id}>
-        <iframe
+        <VmComponent src="efiz.near/widget/Tree" />
+        {/* <div
           className="tl-embed"
           srcDoc={webComponentHTML}
           width={toDomPrecision(shape.props.w)}
@@ -70,8 +72,12 @@ class PreviewShape extends BaseBoxShapeUtil<PreviewShapeType> {
           style={{
             border: 0,
             pointerEvents: isEditing ? "auto" : "none",
+            width: toDomPrecision(shape.props.w),
+            height: toDomPrecision(shape.props.h),
           }}
-        />
+        >
+          
+        </div> */}
       </HTMLContainer>
     );
   }
@@ -85,40 +91,18 @@ const Tldraw = dynamic(async () => (await import("@tldraw/tldraw")).Tldraw, {
   ssr: false,
 });
 
+const VmInitializer = dynamic(() => import("../components/vm/VmInitializer"), {
+  ssr: false,
+});
+
 export default function Home() {
-  // const [html, setHtml] = useState<null | string>(null);
-
-  // useEffect(() => {
-  //   const listener = (e: KeyboardEvent) => {
-  //     if (e.key === "Escape") {
-  //       setHtml(null);
-  //     }
-  //   };
-  //   window.addEventListener("keydown", listener);
-
-  //   return () => {
-  //     window.removeEventListener("keydown", listener);
-  //   };
-  // });
-
   return (
     <>
       <div className={`w-screen h-screen`}>
         <Tldraw persistenceKey="tldraw" shapeUtils={[PreviewShape]}>
-          <ExportButton /*setHtml={setHtml}*/ />
+          <ExportButton />
         </Tldraw>
       </div>
-      {/* {html &&
-        ReactDOM.createPortal(
-          <div
-            className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center"
-            style={{ zIndex: 2000, backgroundColor: "rgba(0,0,0,0.5)" }}
-            onClick={() => setHtml(null)}
-          >
-            <PreviewModal html={html} setHtml={setHtml} />
-          </div>,
-          document.body
-        )} */}
     </>
   );
 }

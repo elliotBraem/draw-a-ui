@@ -13,6 +13,7 @@
     "@vercel/analytics": "^1.1.1",
     "canvas-size": "^1.2.6",
     "html2canvas": "^1.4.1",
+    "near-bos-webcomponent": "^0.0.2",
     "next": "14.0.1",
     "prismjs": "^1.29.0",
     "react": "^18",

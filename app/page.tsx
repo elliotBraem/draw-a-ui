@@ -2,34 +2,25 @@
 
 "use client";
 
-import dynamic from "next/dynamic";
-import "@tldraw/tldraw/tldraw.css";
+import { blobToBase64 } from "@/lib/blobToBase64";
+import { getSvgAsImage } from "@/lib/getSvgAsImage";
 import {
   BaseBoxShapeUtil,
-  Geometry2d,
   HTMLContainer,
-  Rectangle2d,
-  ShapeUtil,
   TLBaseShape,
-  TLEmbedShape,
-  TLImageShape,
-  TLShapeUtilFlag,
   toDomPrecision,
   useEditor,
   useExportAs,
   useIsEditing,
 } from "@tldraw/tldraw";
-import { getSvgAsImage } from "@/lib/getSvgAsImage";
-import { blobToBase64 } from "@/lib/blobToBase64";
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { PreviewModal } from "@/components/PreviewModal";
-import { format } from "path";
+import "@tldraw/tldraw/tldraw.css";
+import dynamic from "next/dynamic";
+import { useState } from "react";
 
 type PreviewShapeType = TLBaseShape<
   "preview",
   {
-    html: string;
+    code: string;
     w: number;
     h: number;
   }
@@ -40,7 +31,7 @@ class PreviewShape extends BaseBoxShapeUtil<PreviewShapeType> {
 
   getDefaultProps(): PreviewShapeType["props"] {
     return {
-      html: "",
+      code: "",
       w: (960 * 2) / 3,
       h: (540 * 2) / 3,
     };
@@ -53,11 +44,26 @@ class PreviewShape extends BaseBoxShapeUtil<PreviewShapeType> {
 
   override component(shape: PreviewShapeType) {
     const isEditing = useIsEditing(shape.id);
+    const webComponentHTML = `
+    <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Near social</title>
+    <script src="/main.ff64119e7b47ef387a47.bundle.js"></script>
+    <script src="/runtime.11b6858f93d8625836ab.bundle.js"></script>
+  </head>
+  <body>
+    <near-social-viewer code="${shape.props.code}"></near-social-viewer>
+  </body>
+</html>
+    `;
     return (
       <HTMLContainer className="tl-embed-container" id={shape.id}>
         <iframe
           className="tl-embed"
-          srcDoc={shape.props.html}
+          srcDoc={webComponentHTML}
           width={toDomPrecision(shape.props.w)}
           height={toDomPrecision(shape.props.h)}
           draggable={false}
@@ -154,7 +160,7 @@ function ExportButton(/*{ setHtml }: { setHtml: (html: string) => void }*/) {
 
           const previousHtml =
             previousPreviews.length === 1
-              ? previousPreviews[0].props.html
+              ? previousPreviews[0].props.code
               : "No previous design has been provided this time.";
 
           const svg = await editor.getSvg(editor.selectedShapeIds);
@@ -187,15 +193,37 @@ function ExportButton(/*{ setHtml }: { setHtml: (html: string) => void }*/) {
           }
 
           const message = json.choices[0].message.content;
-          const start = message.indexOf("<!DOCTYPE html>");
-          const end = message.indexOf("</html>");
-          const html = message.slice(start, end + "</html>".length);
+
+          // Isolate JSX
+          const startPattern = '```jsx';
+          const endPattern = '```';
+          const startIndex = message.indexOf(startPattern);
+  
+          if (startIndex === -1) {
+            alert("Error parsing JSX from response: " + message);
+            return;
+          }
+
+          const endIndex = message.indexOf(endPattern, startIndex + startPattern.length);
+
+          if (endIndex === -1) {
+            alert("JSX block not properly closed: " + message);
+            return;
+          }
+
+          let code = message.substring(startIndex + startPattern.length, endIndex).trim();
+
+          // Remove imports
+          code = code.replace(/^import.*;$/gm, '');
+
+          // Replace "export default App" with "return App(props);"
+          code = code.replace(/export default App;/, 'return App(props);');
 
           editor.createShape<PreviewShapeType>({
             type: "preview",
             x: previewPosition.x,
             y: previewPosition.y,
-            props: { html },
+            props: { code },
           });
 
           // setHtml(html);

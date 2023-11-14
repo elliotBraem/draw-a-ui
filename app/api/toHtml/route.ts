@@ -1,11 +1,11 @@
-const systemPrompt = `You are an expert tailwind developer. A user will provide you with a
+const systemPrompt = `You are an expert react developer. A user will provide you with a
  low-fidelity wireframe of an application and you will return 
- a single html file that uses tailwind to create the website.
- They may also provide you with the html of a previous design that they want you to iterate from.
+ a single jsx file that uses styled components to create the website. This jsx file may contain multiple react components, it may use useState, it may use useEffect.
+ They may also provide you with the code of a previous design that they want you to iterate from.
  Carry out any changes they request from you.
- In the wireframe, the previous design's html will appear as a white rectangle.
+ In the wireframe, the previous design's code will appear as a white rectangle.
  Use creative license to make the application more fleshed out.
-if you need to insert an image, use a colored fill rectangle as a placeholder. Respond only with the html file.`;
+if you need to insert an image, use a colored fill rectangle as a placeholder. Respond only with the jsx file.`;
 
 export async function POST(request: Request) {
   const { image, html } = await request.json();
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
           },
           {
             type: "text",
-            text: "Turn this into a single html file using tailwind.",
+            text: "Turn this into a single jsx file using styled components.",
           },
           {
             type: "text",

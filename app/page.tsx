@@ -2,29 +2,21 @@
 
 "use client";
 
-import dynamic from "next/dynamic";
-import "@tldraw/tldraw/tldraw.css";
+import { VmComponent } from "@/components/vm/VmComponent";
+import { blobToBase64 } from "@/lib/blobToBase64";
+import { getSvgAsImage } from "@/lib/getSvgAsImage";
 import {
   BaseBoxShapeUtil,
-  Geometry2d,
   HTMLContainer,
-  Rectangle2d,
-  ShapeUtil,
   TLBaseShape,
-  TLEmbedShape,
-  TLImageShape,
-  TLShapeUtilFlag,
   toDomPrecision,
   useEditor,
   useExportAs,
   useIsEditing,
 } from "@tldraw/tldraw";
-import { getSvgAsImage } from "@/lib/getSvgAsImage";
-import { blobToBase64 } from "@/lib/blobToBase64";
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { PreviewModal } from "@/components/PreviewModal";
-import { format } from "path";
+import "@tldraw/tldraw/tldraw.css";
+import dynamic from "next/dynamic";
+import { useState } from "react";
 
 type PreviewShapeType = TLBaseShape<
   "preview",
@@ -55,17 +47,19 @@ class PreviewShape extends BaseBoxShapeUtil<PreviewShapeType> {
     const isEditing = useIsEditing(shape.id);
     return (
       <HTMLContainer className="tl-embed-container" id={shape.id}>
-        <iframe
+        <VmComponent src="efiz.near/widget/Tree" />
+        {/* <div
           className="tl-embed"
-          srcDoc={shape.props.html}
-          width={toDomPrecision(shape.props.w)}
-          height={toDomPrecision(shape.props.h)}
           draggable={false}
           style={{
             border: 0,
             pointerEvents: isEditing ? "auto" : "none",
+            width: toDomPrecision(shape.props.w),
+            height: toDomPrecision(shape.props.h),
           }}
-        />
+        >
+          
+        </div> */}
       </HTMLContainer>
     );
   }
@@ -79,40 +73,18 @@ const Tldraw = dynamic(async () => (await import("@tldraw/tldraw")).Tldraw, {
   ssr: false,
 });
 
+const VmInitializer = dynamic(() => import("../components/vm/VmInitializer"), {
+  ssr: false,
+});
+
 export default function Home() {
-  // const [html, setHtml] = useState<null | string>(null);
-
-  // useEffect(() => {
-  //   const listener = (e: KeyboardEvent) => {
-  //     if (e.key === "Escape") {
-  //       setHtml(null);
-  //     }
-  //   };
-  //   window.addEventListener("keydown", listener);
-
-  //   return () => {
-  //     window.removeEventListener("keydown", listener);
-  //   };
-  // });
-
   return (
     <>
       <div className={`w-screen h-screen`}>
         <Tldraw persistenceKey="tldraw" shapeUtils={[PreviewShape]}>
-          <ExportButton /*setHtml={setHtml}*/ />
+          <ExportButton />
         </Tldraw>
       </div>
-      {/* {html &&
-        ReactDOM.createPortal(
-          <div
-            className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center"
-            style={{ zIndex: 2000, backgroundColor: "rgba(0,0,0,0.5)" }}
-            onClick={() => setHtml(null)}
-          >
-            <PreviewModal html={html} setHtml={setHtml} />
-          </div>,
-          document.body
-        )} */}
     </>
   );
 }

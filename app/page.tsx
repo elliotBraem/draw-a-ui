@@ -14,6 +14,10 @@ const Tldraw = dynamic(async () => (await import('@tldraw/tldraw')).Tldraw, {
 
 const shapeUtils = [PreviewShapeUtil]
 
+const VmInitializer = dynamic(() => import("../components/vm/VmInitializer"), {
+  ssr: false,
+});
+
 export default function Home() {
 	return (
 		<>

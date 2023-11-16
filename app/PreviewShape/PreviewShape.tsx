@@ -41,24 +41,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
     const isEditing = useIsEditing(shape.id);
     const toast = useToasts();
 
-    const webComponentHTML = ` // I'm not going to pass this in yet, because I think near-social-viewer should come from the AI
-			<!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<meta charset="utf-8">
-			<meta name="viewport" content="width=device-width,initial-scale=1">
-			<title>Near social</title>
-	
-			// Keep these up to date with latest petersalomonsen/near-bos-webcomponent
-			
-		</head>
-		<body>
-			// code mappings? 
-			<near-social-viewer code="{shape.props.code}"></near-social-viewer> // this can be replaced with code
-		</body>
-	</html>
-			`;
-
     return (
       <HTMLContainer className="tl-embed-container" id={shape.id}>
         {shape.props.html ? (

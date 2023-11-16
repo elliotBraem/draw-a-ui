@@ -2,6 +2,7 @@ import {
 	useEditor,
 	useToasts,
 	createShapeId,
+	getSvgAsImage,
 } from '@tldraw/tldraw'
 import { useState } from 'react'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
@@ -74,40 +75,61 @@ export function ExportButton() {
 						props: { html: '', source: dataUrl as string },
 					})
 
-					const resp = await fetch('/api/toHtml', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							image: dataUrl,
-							html: previousHtml,
-							apiKey:
-								(
-									document.getElementById(
-										'openai_key_risky_but_cool'
-									) as HTMLInputElement
-								)?.value ?? null,
-						}),
-					})
 
-					const json = await resp.json()
 
-					if (json.error) {
-						console.error(json)
-						toast.addToast({
-							icon: 'cross-2',
-							title: 'OpenAI API Error',
-							description: `${json.error.message?.slice(0, 100)}...`,
-						})
-						editor.deleteShape(id)
-						return
-					}
 
-					const message = json.choices[0].message.content
-					const start = message.indexOf('<!DOCTYPE html>')
-					const end = message.indexOf('</html>')
-					const html = message.slice(start, end + '</html>'.length)
+					// const resp = await fetch('/api/toHtml', {
+					// 	method: 'POST',
+					// 	headers: {
+					// 		'Content-Type': 'application/json',
+					// 	},
+					// 	body: JSON.stringify({
+					// 		image: dataUrl,
+					// 		html: previousHtml,
+					// 		apiKey:
+					// 			(
+					// 				document.getElementById(
+					// 					'openai_key_risky_but_cool'
+					// 				) as HTMLInputElement
+					// 			)?.value ?? null,
+					// 	}),
+					// })
+
+					// const json = await resp.json()
+
+					// if (json.error) {
+					// 	console.error(json)
+					// 	toast.addToast({
+					// 		icon: 'cross-2',
+					// 		title: 'OpenAI API Error',
+					// 		description: `${json.error.message?.slice(0, 100)}...`,
+					// 	})
+					// 	editor.deleteShape(id)
+					// 	return
+					// }
+
+
+    const html = `
+		<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>Near social</title>
+
+		<script src="/main.a3ef7374a57ed9263007.bundle.js" defer></script>
+		<script src="/runtime.11b6858f93d8625836ab.bundle.js" defer></script>
+	</head>
+	<body>
+		<near-social-viewer src="efiz.near/widget/Tree"></near-social-viewer>
+	</body>
+</html>
+		`;
+
+					// const message = json.choices[0].message.content
+					// const start = message.indexOf('<!DOCTYPE html>')
+					// const end = message.indexOf('</html>')
+					// const html = message.slice(start, end + '</html>'.length)
 
 					editor.updateShape<PreviewShape>({
 						id,
@@ -122,8 +144,9 @@ export function ExportButton() {
 						description: `Something went wrong: ${e.message.slice(0, 100)}`,
 					})
 				} finally {
-					setLoading(false)
+					
 				}
+				setLoading(false)
 			}}
 			className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
 			style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}

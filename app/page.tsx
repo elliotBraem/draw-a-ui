@@ -7,12 +7,13 @@ import dynamic from 'next/dynamic'
 import { PreviewShapeUtil } from './PreviewShape/PreviewShape'
 import { APIKeyInput } from './components/APIKeyInput'
 import { ExportButton } from './components/ExportButton'
-
-const Tldraw = dynamic(async () => (await import('@tldraw/tldraw')).Tldraw, {
-	ssr: false,
-})
+import { VmComponent } from '@/components/vm/VmComponent'
 
 const shapeUtils = [PreviewShapeUtil]
+
+const Tldraw = dynamic(async () => (await import("@tldraw/tldraw")).Tldraw, {
+  ssr: false,
+});
 
 const VmInitializer = dynamic(() => import("../components/vm/VmInitializer"), {
   ssr: false,

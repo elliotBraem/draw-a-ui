@@ -1,6 +1,5 @@
 import {
 	useEditor,
-	getSvgAsImage,
 	useToasts,
 	createShapeId,
 } from '@tldraw/tldraw'

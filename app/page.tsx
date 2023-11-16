@@ -24,6 +24,7 @@ export default function Home() {
 					shareZone={<ExportButton />}
 				>
 					<APIKeyInput />
+					<ActionButton />
 					<LockupLink />
 				</Tldraw>
 			</div>
